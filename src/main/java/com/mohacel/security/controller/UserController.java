@@ -18,13 +18,13 @@ public class UserController {
         String message = "Welcome the Word of Spring REST API";
         return  new ResponseEntity<>(message, HttpStatus.OK);
     }
-    @PostMapping("/user")
+    @PostMapping("/registration")
     public ResponseEntity<String> register(@RequestBody UserDto userDto){
         String registerInfo = service.registerUser(userDto);
         return  new ResponseEntity<>(registerInfo, HttpStatus.OK);
     }
 
-    @GetMapping("/allUser")
+    @GetMapping("/user/all")
     public ResponseEntity<List<UserDto>> allUser(){
         List<UserDto> allUser = service.getAllUser();
         return  new ResponseEntity<>(allUser, HttpStatus.OK);

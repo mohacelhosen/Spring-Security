@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+
+
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -32,12 +34,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }
+        //without role verification
         return new User(user.getEmail(), user.getPassword(), new ArrayList<>());
+
 
         //if you have any rules like "student/ teacher/ staff/ admin"
 //        return new User(user.getEmail(), user.getPassword(), getAuthorities(user.getRoles()));
     }
 
+    // to verify the rules and give the permission
     private Collection<? extends GrantedAuthority> getAuthorities(List<RoleEntity> roles) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (RoleEntity role : roles) {
@@ -46,3 +51,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return authorities;
     }
 }
+
