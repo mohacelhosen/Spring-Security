@@ -3,9 +3,11 @@ package com.mohacel.security.service;
 import com.mohacel.security.dto.AddressDto;
 import com.mohacel.security.dto.UserDto;
 import com.mohacel.security.entity.AddressEntity;
+import com.mohacel.security.entity.RoleEntity;
 import com.mohacel.security.entity.UserEntity;
 import com.mohacel.security.exception.InappropriateDataException;
 import com.mohacel.security.repository.AddressRepository;
+import com.mohacel.security.repository.RoleRepository;
 import com.mohacel.security.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +16,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class UserService {
     private UserRepository userRepository;
     private AddressRepository addressRepository;
+    private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder; // Add this line
 
     @Autowired
-    public UserService(UserRepository userRepository, AddressRepository addressRepository) {
+    public UserService(UserRepository userRepository,RoleRepository roleRepository, AddressRepository addressRepository) {
         this.userRepository = userRepository;
+        this.roleRepository=roleRepository;
         this.addressRepository = addressRepository;
         this.passwordEncoder = new BCryptPasswordEncoder(); // Add this line
     }
@@ -39,6 +44,14 @@ public class UserService {
            BeanUtils.copyProperties(userDto.getUserAddress(),addressEntity);
            user.setUserAddress(addressEntity);
            BeanUtils.copyProperties(userDto, user);
+
+           if(userDto.getDesignation().equalsIgnoreCase("teacher")){
+               user.setRoles(Arrays.asList(new RoleEntity(1,"teacher")));
+           } else if (userDto.getDesignation().equalsIgnoreCase("admin")) {
+               user.setRoles(Arrays.asList(new RoleEntity(1,"admin")));
+           }else {
+               user.setRoles(Arrays.asList(new RoleEntity(1,"student")));
+           }
 
            // Hash the password using Bcrypt
            String hashedPassword  = passwordEncoder.encode(userDto.getPassword());

@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,7 +16,7 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
-    private String fullName;
+    private String userName;
     private String email;
     private String password;
     private LocalDate dob;
@@ -24,7 +26,11 @@ public class UserEntity {
     private String userContactNumber;
     private String userNationality;
     private String academicInterests;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "Address_ID")
     private AddressEntity userAddress;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<RoleEntity> roles;
 }
