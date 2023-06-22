@@ -32,8 +32,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }
+        return new User(user.getEmail(), user.getPassword(), new ArrayList<>());
 
-        return new User(user.getEmail(), user.getPassword(), getAuthorities(user.getRoles()));
+        //if you have any rules like "student/ teacher/ staff/ admin"
+//        return new User(user.getEmail(), user.getPassword(), getAuthorities(user.getRoles()));
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(List<RoleEntity> roles) {
