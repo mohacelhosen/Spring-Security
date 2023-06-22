@@ -38,36 +38,45 @@ public class UserService {
     // register data will save into database
     public String registerUser(UserDto userDto){
         System.out.println(userDto);
-        UserEntity user = new UserEntity();
-       try {
-           AddressEntity addressEntity = new AddressEntity();
-           BeanUtils.copyProperties(userDto.getUserAddress(),addressEntity);
-           user.setUserAddress(addressEntity);
-           BeanUtils.copyProperties(userDto, user);
+        List<RoleEntity> userRoleList = new ArrayList<>();
+        try {
+            UserEntity user = new UserEntity();
+            AddressEntity addressEntity = new AddressEntity();
+            RoleEntity roleEntity = new RoleEntity();
+            BeanUtils.copyProperties(userDto.getUserAddress(),addressEntity);
+            user.setUserAddress(addressEntity);
+            BeanUtils.copyProperties(userDto, user);
 
-           if(userDto.getDesignation().equalsIgnoreCase("teacher")){
-               user.setRoles(Arrays.asList(new RoleEntity(1,"teacher")));
-           } else if (userDto.getDesignation().equalsIgnoreCase("admin")) {
-               user.setRoles(Arrays.asList(new RoleEntity(1,"admin")));
-           }else {
-               user.setRoles(Arrays.asList(new RoleEntity(1,"student")));
-           }
+            if(userDto.getDesignation().equalsIgnoreCase("teacher")){
+                roleEntity.setRoleName("teacher");
+            } else if (userDto.getDesignation().equalsIgnoreCase("admin")) {
+                roleEntity.setRoleName("admin");
+            }else {
+                roleEntity.setRoleName("student");
+            }
 
-           // Hash the password using Bcrypt
-           String hashedPassword  = passwordEncoder.encode(userDto.getPassword());
-           user.setPassword(hashedPassword );
+            // Save the RoleEntity object
+            roleRepository.save(roleEntity);
 
-           Integer userId = userRepository.save(user).getUserId();
-           System.out.println(user);
-           if(userId != null){
-               return "Registration Successful";
-           }else{
-               return "Something is wrong!";
-           }
-       }catch (Exception e){
-           throw  new InappropriateDataException(e.getMessage());
-       }
+            userRoleList.add(roleEntity);
+            user.setRoles(userRoleList);
+
+            // Hash the password using Bcrypt
+            String hashedPassword  = passwordEncoder.encode(userDto.getPassword());
+            user.setPassword(hashedPassword );
+
+            Integer userId = userRepository.save(user).getUserId();
+            System.out.println(user);
+            if(userId != null){
+                return "Registration Successful";
+            }else{
+                return "Something is wrong!";
+            }
+        }catch (Exception e){
+            throw  new InappropriateDataException(e.getMessage());
+        }
     }
+
 
     // retrieve the all the user
     public List<UserDto> getAllUser(){

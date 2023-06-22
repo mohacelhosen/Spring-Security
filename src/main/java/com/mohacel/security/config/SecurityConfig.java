@@ -1,7 +1,10 @@
 package com.mohacel.security.config;
 
+import com.mohacel.security.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -16,8 +19,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final UserDetailsServiceImpl userDetailsService;
 
-    private PasswordEncoder passwordEncoder ;
+    @Autowired
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -25,29 +32,16 @@ public class SecurityConfig {
     }
 
     @Bean
-    //authentication
-    public UserDetailsService userDetailsService(PasswordEncoder encoder){
-        UserDetails admin = User.withUsername("mohacel")
-                .password(encoder.encode("Admin@123"))
-                .roles("USER","ADMIN")
-                .build();
-
-        UserDetails user = User.withUsername("tushar")
-                .password(encoder.encode("User@123"))
-                .roles("USER")
-                .build();
-
-        return  new InMemoryUserDetailsManager(admin, user);
-    }
-
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf -> csrf.disable())
                 .authorizeRequests(auth -> auth
-                        .requestMatchers("/", "/user").permitAll()
+                        .requestMatchers("/", "/user","/swagger-ui/index.html").permitAll()
                         .anyRequest().authenticated()).formLogin()
                 .and()
                 .build();
+    }
+
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 }
