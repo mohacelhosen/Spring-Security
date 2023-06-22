@@ -16,4 +16,12 @@ public class GlobalExceptionHandler {
 
         return  new ResponseEntity<>(exceptionInfo, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ExceptionInfo> usernameNotFoundException(UsernameNotFoundException usernameNotFoundException){
+        ExceptionInfo exceptionInfo = new ExceptionInfo();
+        exceptionInfo.setCode("w101");
+        exceptionInfo.setMessage(usernameNotFoundException.getMessage());
+        return  new ResponseEntity<>(exceptionInfo, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
