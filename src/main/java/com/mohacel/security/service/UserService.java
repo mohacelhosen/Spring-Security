@@ -38,6 +38,10 @@ public class UserService {
     // register data will save into database
     public String registerUser(UserDto userDto){
         System.out.println(userDto);
+        if (userRepository.findByEmail(userDto.getEmail()) != null){
+            return "User Already Exist";
+        }
+
         List<RoleEntity> userRoleList = new ArrayList<>();
         try {
             UserEntity user = new UserEntity();
