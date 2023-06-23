@@ -24,4 +24,12 @@ public class GlobalExceptionHandler {
         exceptionInfo.setMessage(usernameNotFoundException.getMessage());
         return  new ResponseEntity<>(exceptionInfo, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ExceptionInfo> userNotFoundException(UserNotFoundException userNotFoundException){
+        ExceptionInfo exceptionInfo = new ExceptionInfo();
+        exceptionInfo.setMessage(userNotFoundException.getMessage());
+        exceptionInfo.setCode("N-102");
+        return  new ResponseEntity<>(exceptionInfo, HttpStatus.BAD_REQUEST);
+    }
 }

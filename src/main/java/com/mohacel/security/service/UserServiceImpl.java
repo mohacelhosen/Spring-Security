@@ -11,23 +11,24 @@ import com.mohacel.security.repository.RoleRepository;
 import com.mohacel.security.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserServiceImpl implements IUserService {
     private UserRepository userRepository;
     private AddressRepository addressRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder; // Add this line
 
     @Autowired
-    public UserService(UserRepository userRepository,RoleRepository roleRepository, AddressRepository addressRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, AddressRepository addressRepository) {
         this.userRepository = userRepository;
         this.roleRepository=roleRepository;
         this.addressRepository = addressRepository;
@@ -96,6 +97,20 @@ public class UserService {
             userDtoList.add(userDto);
         }
         return  userDtoList;
+    }
+
+    @Override
+    public UserDto findUserById(Integer userId) {
+        Optional<UserEntity> user = userRepository.findById(userId);
+        UserDto dtoUser = new UserDto();
+        AddressDto dtoAddress = new AddressDto();
+        if (user.isPresent()){
+            BeanUtils.copyProperties(user.get().getUserAddress(),dtoAddress);
+            dtoUser.setUserAddress(dtoAddress);
+            BeanUtils.copyProperties(user, dtoUser);
+            return  dtoUser;
+        }
+        return null;
     }
 
 }

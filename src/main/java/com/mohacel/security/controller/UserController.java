@@ -1,10 +1,12 @@
 package com.mohacel.security.controller;
 
 import com.mohacel.security.dto.UserDto;
-import com.mohacel.security.service.UserService;
+import com.mohacel.security.exception.UserNotFoundException;
+import com.mohacel.security.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,7 +14,7 @@ import java.util.List;
 @RestController
 public class UserController {
     @Autowired
-    private UserService service;
+    private UserServiceImpl service;
     @GetMapping("/")
     public ResponseEntity<String> greeting(){
         String message = "Welcome the Word of Spring REST API";
@@ -25,9 +27,20 @@ public class UserController {
     }
 
     @GetMapping("/user/all")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<UserDto>> allUser(){
         List<UserDto> allUser = service.getAllUser();
         return  new ResponseEntity<>(allUser, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{userId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
+    public ResponseEntity<UserDto> userById(@PathVariable Integer userId){
+        UserDto userById = service.findUserById(userId);
+        if (userById !=null){
+            return new ResponseEntity<>(userById, HttpStatus.OK);
+        }
+        throw  new UserNotFoundException("Invalid Id");
     }
 
     @GetMapping("/test")
