@@ -1,6 +1,5 @@
 package com.mohacel.security.service;
 
-import com.mohacel.security.entity.RoleEntity;
 import com.mohacel.security.entity.UserEntity;
 import com.mohacel.security.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +12,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 
 @Service
@@ -35,19 +35,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }
         //without role verification
-        return new User(user.getEmail(), user.getPassword(), new ArrayList<>());
+//        return new User(user.getEmail(), user.getPassword(), new ArrayList<>());
 
 
         //if you have any rules like "student/ teacher/ staff/ admin"
-//        return new User(user.getEmail(), user.getPassword(), getAuthorities(user.getRoles()));
+        return new User(user.getEmail(), user.getPassword(), getAuthorities(user.getRoles()));
     }
 
     // to verify the rules and give the permission
-    private Collection<? extends GrantedAuthority> getAuthorities(List<RoleEntity> roles) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        for (RoleEntity role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
-        }
+    private Collection<? extends GrantedAuthority> getAuthorities(String roles) {
+        List<SimpleGrantedAuthority> authorities = Arrays.stream(roles.split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         return authorities;
     }
 }

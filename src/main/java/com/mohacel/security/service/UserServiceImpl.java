@@ -3,15 +3,12 @@ package com.mohacel.security.service;
 import com.mohacel.security.dto.AddressDto;
 import com.mohacel.security.dto.UserDto;
 import com.mohacel.security.entity.AddressEntity;
-import com.mohacel.security.entity.RoleEntity;
 import com.mohacel.security.entity.UserEntity;
 import com.mohacel.security.exception.InappropriateDataException;
 import com.mohacel.security.repository.AddressRepository;
-import com.mohacel.security.repository.RoleRepository;
 import com.mohacel.security.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,13 +21,12 @@ import java.util.Optional;
 public class UserServiceImpl implements IUserService {
     private UserRepository userRepository;
     private AddressRepository addressRepository;
-    private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder; // Add this line
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, AddressRepository addressRepository) {
+    public UserServiceImpl(UserRepository userRepository, AddressRepository addressRepository) {
         this.userRepository = userRepository;
-        this.roleRepository=roleRepository;
+
         this.addressRepository = addressRepository;
         this.passwordEncoder = new BCryptPasswordEncoder(); // Add this line
     }
@@ -43,28 +39,22 @@ public class UserServiceImpl implements IUserService {
             return "User Already Exist";
         }
 
-        List<RoleEntity> userRoleList = new ArrayList<>();
         try {
             UserEntity user = new UserEntity();
             AddressEntity addressEntity = new AddressEntity();
-            RoleEntity roleEntity = new RoleEntity();
+
             BeanUtils.copyProperties(userDto.getUserAddress(),addressEntity);
             user.setUserAddress(addressEntity);
             BeanUtils.copyProperties(userDto, user);
 
             if(userDto.getDesignation().equalsIgnoreCase("teacher")){
-                roleEntity.setRoleName("teacher");
+                user.setRoles("ROLE_TEACHER");
             } else if (userDto.getDesignation().equalsIgnoreCase("admin")) {
-                roleEntity.setRoleName("admin");
+                user.setRoles("ROLE_ADMIN, ROLE_TEACHER, ROLE_USER");
             }else {
-                roleEntity.setRoleName("student");
+                user.setRoles("ROLE_USER");
             }
 
-            // Save the RoleEntity object
-            roleRepository.save(roleEntity);
-
-            userRoleList.add(roleEntity);
-            user.setRoles(userRoleList);
 
             // Hash the password using Bcrypt
             String hashedPassword  = passwordEncoder.encode(userDto.getPassword());

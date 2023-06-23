@@ -19,6 +19,7 @@ public class UserEntity {
     private String userName;
     private String email;
     private String password;
+    private String designation;
     private LocalDate dob;
     private String gender;
     private Double height;
@@ -30,7 +31,5 @@ public class UserEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "Address_ID")
     private AddressEntity userAddress;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    private List<RoleEntity> roles;
+    private String roles;
 }
