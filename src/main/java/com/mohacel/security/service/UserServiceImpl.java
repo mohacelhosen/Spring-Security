@@ -31,7 +31,7 @@ public class UserServiceImpl implements IUserService {
         this.passwordEncoder = new BCryptPasswordEncoder(); // Add this line
     }
 
-
+    @Override
     // register data will save into database
     public String registerUser(UserDto userDto){
         System.out.println(userDto);
@@ -47,13 +47,14 @@ public class UserServiceImpl implements IUserService {
             user.setUserAddress(addressEntity);
             BeanUtils.copyProperties(userDto, user);
 
-            if(userDto.getDesignation().equalsIgnoreCase("teacher")){
+            if (userDto.getDesignation().equalsIgnoreCase("teacher")){
                 user.setRoles("ROLE_TEACHER");
             } else if (userDto.getDesignation().equalsIgnoreCase("admin")) {
-                user.setRoles("ROLE_ADMIN, ROLE_TEACHER, ROLE_USER");
-            }else {
+                user.setRoles("ROLE_ADMIN,ROLE_TEACHER,ROLE_USER");
+            } else {
                 user.setRoles("ROLE_USER");
             }
+
 
 
             // Hash the password using Bcrypt
@@ -73,6 +74,7 @@ public class UserServiceImpl implements IUserService {
     }
 
 
+    @Override
     // retrieve the all the user
     public List<UserDto> getAllUser(){
         List<UserEntity> userEntities = userRepository.findAll();
