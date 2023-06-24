@@ -2,6 +2,8 @@ package com.mohacel.security.service;
 
 import com.mohacel.security.entity.UserEntity;
 import com.mohacel.security.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
-
+    private static  final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
     @Autowired
     public UserDetailsServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -42,10 +44,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return new User(user.getEmail(), user.getPassword(), getAuthorities(user.getRoles()));
     }
 
+
+
     // to verify the rules and give the permission
     private Collection<? extends GrantedAuthority> getAuthorities(String roles) {
         List<SimpleGrantedAuthority> authorities = Arrays.stream(roles.split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        logger.debug("User authorities: {}", authorities);
         return authorities;
     }
+
 }
 

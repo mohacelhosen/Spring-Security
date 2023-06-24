@@ -2,6 +2,7 @@ package com.mohacel.security.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -31,5 +32,34 @@ public class GlobalExceptionHandler {
         exceptionInfo.setMessage(userNotFoundException.getMessage());
         exceptionInfo.setCode("N-102");
         return  new ResponseEntity<>(exceptionInfo, HttpStatus.BAD_REQUEST);
+    }
+
+
+    //Access Denied
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
+        String message="░░▄▀░░░░░░░░░░░░░░░▀▀▄▄░░░░░ \n" +
+                "░░▄▀░░░░░░░░░░░░░░░░░░░░▀▄░░░ \n" +
+                "░▄▀░░░░░░░░░░░░░░░░░░░░░░░█░░ \n" +
+                "░█░░░░░░░░░░░░░░░░░░░░░░░░░█░ \n" +
+                "▐░░░░░░░░░░░░░░░░░░░░░░░░░░░█ \n" +
+                "█░░░░▀▀▄▄▄▄░░░▄▌░░░░░░░░░░░░▐ \n" +
+                "▌░░░░░▌░░▀▀█▀▀░░░▄▄░░░░░░░▌░▐ \n" +
+                "▌░░░░░░▀▀▀▀░░░░░░▌░▀██▄▄▄▀░░▐ \n" +
+                "▌░░░░░░░░░░░░░░░░░▀▄▄▄▄▀░░░▄▌ \n" +
+                "▐░░░░▐░░░░░░░░░░░░░░░░░░░░▄▀░ \n" +
+                "░█░░░▌░░▌▀▀▀▄▄▄▄░░░░░░░░░▄▀░░ \n" +
+                "░░█░░▀░░░░░░░░░░▀▌░░▌░░░█░░░░ \n" +
+                "░░░▀▄░░░░░░░░░░░░░▄▀░░▄▀░░░░░ \n" +
+                "░░░░░▀▄▄▄░░░░░░░░░▄▄▀▀░░░░░░░ \n" +
+                "░░░░░░░░▐▌▀▀▀▀▀▀▀▀░░░░░░░░░░░ \n" +
+                "░░░░░░░░█░░░░░░░░░░░░░░░░░░░░ \n" +
+                "░░╔═╗╔═╗╔═╗░░░░░║░║╔═╗║░║░░░░ \n" +
+                "░░╠═╣╠╦╝╠╣░░░░░░╚╦╝║░║║░║░░░░ \n" +
+                "░░║░║║╚═╚═╝░░░░░░║░╚═╝╚═╝░░░░ \n" +
+                "║╔═░╦░╦═╗╦═╗╦╔╗║╔═╗░░╔╦╗╔═╗╔╗ \n" +
+                "╠╩╗░║░║░║║░║║║║║║═╗░░║║║╠╣░╔╝ \n" +
+                "║░╚░╩░╩═╝╩═╝╩║╚╝╚═╝░░║║║╚═╝▄░ ";
+        return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
     }
 }

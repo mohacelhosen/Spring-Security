@@ -94,12 +94,14 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserDto findUserById(Integer userId) {
         Optional<UserEntity> user = userRepository.findById(userId);
+        System.out.println(user);
         UserDto dtoUser = new UserDto();
         AddressDto dtoAddress = new AddressDto();
         if (user.isPresent()){
             BeanUtils.copyProperties(user.get().getUserAddress(),dtoAddress);
             dtoUser.setUserAddress(dtoAddress);
-            BeanUtils.copyProperties(user, dtoUser);
+            BeanUtils.copyProperties(user.get(), dtoUser);
+            System.out.println(dtoUser);
             return  dtoUser;
         }
         return null;
