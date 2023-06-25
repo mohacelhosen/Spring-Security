@@ -3,11 +3,15 @@ package com.mohacel.security.controller;
 import com.mohacel.security.dto.AuthRequest;
 import com.mohacel.security.dto.UserDto;
 import com.mohacel.security.exception.UserNotFoundException;
+import com.mohacel.security.service.JwtService;
 import com.mohacel.security.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +20,10 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserServiceImpl service;
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
     @GetMapping("/")
     public ResponseEntity<String> greeting(){
         String message = "Welcome the Word of Spring REST API";
@@ -53,7 +61,10 @@ public class UserController {
 
     @PostMapping("/authenticate")
     public String authenticateAndGetToken(@RequestBody AuthRequest authRequest){
-
-        return null;
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
+        if (authentication.isAuthenticated()){
+            return  jwtService.generateToken(authRequest.getEmail());
+        }
+        throw new UserNotFoundException("Invalid email or password!");
     }
 }
