@@ -1,5 +1,6 @@
 package com.mohacel.security.controller;
 
+import com.mohacel.security.dto.AuthRequest;
 import com.mohacel.security.dto.UserDto;
 import com.mohacel.security.exception.UserNotFoundException;
 import com.mohacel.security.service.UserServiceImpl;
@@ -47,5 +48,12 @@ public class UserController {
     public ResponseEntity<String> test(){
         String message = "Your are eligible to 😏";
         return  new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/authenticate")
+    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest){
+
+        return null;
     }
 }
